@@ -4,10 +4,10 @@
 #include <sys/time.h>
 
 //Reads trace file
-void readTrace(){
+void readTrace(const char *a){
 	int c;
 	FILE *file;
-	file = fopen("bzip.trace", "r");
+	file = fopen(a, "r");
 	unsigned addr;
 	char rw;
 	int i = 0;
@@ -30,5 +30,6 @@ int main(int argc, char **argv){
 				a[i] = argv[i];
 				printf("Added %s\n", a[i]);
     }
+		readTrace(a[1]);
 		return 0;
 }
