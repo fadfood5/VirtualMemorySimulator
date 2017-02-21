@@ -3,24 +3,90 @@
 #include <string.h>
 #include <sys/time.h>
 
-//Reads trace file
-void readTrace(const char *fileName, int frames, const char *alg, const char *type){
-	int c;
+void vms(const char *fileName, int fr, const char *type){
 	FILE *file;
 	file = fopen(fileName, "r");
-	unsigned addr;
-	char rw;
 	int i = 0;
+	unsigned a;
+	char b;
 
 	if (file) {
 	    while ((c = getc(file)) != EOF){
-					//fscanf(file, "%x %c", arr[0], arr[1]);
+					fscanf(file, "%x %c", &a, &b);
 					if(strcmp(type, "debug") == 0)
-							putchar(c);
-					i++;
-			}
-	    fclose(file);
+							printf("%u", a);
+							printf(" %c\n", b);
+					}
+					fclose(file);
 	}
+}
+
+void lru(const char *fileName, int fr, const char *type){
+	FILE *file;
+	file = fopen(fileName, "r");
+	int i = 0;
+	unsigned a;
+	char b;
+
+	if (file) {
+	    while ((c = getc(file)) != EOF){
+					fscanf(file, "%x %c", &a, &b);
+					if(strcmp(type, "debug") == 0)
+							printf("%u", a);
+							printf(" %c\n", b);
+					}
+					fclose(file);
+	}
+}
+
+void clk(const char *fileName, int fr, const char *type){
+	FILE *file;
+	file = fopen(fileName, "r");
+	int i = 0;
+	unsigned a;
+	char b;
+
+	if (file) {
+	    while ((c = getc(file)) != EOF){
+					fscanf(file, "%x %c", &a, &b);
+					if(strcmp(type, "debug") == 0)
+							printf("%u", a);
+							printf(" %c\n", b);
+					}
+					fclose(file);
+	}
+}
+
+void opt(const char *fileName, int fr, const char *type){
+	FILE *file;
+	file = fopen(fileName, "r");
+	int i = 0;
+	unsigned a;
+	char b;
+
+	if (file) {
+	    while ((c = getc(file)) != EOF){
+					fscanf(file, "%x %c", &a, &b);
+					if(strcmp(type, "debug") == 0)
+							printf("%u", a);
+							printf(" %c\n", b);
+					}
+					fclose(file);
+	}
+}
+
+//Reads trace file
+void readTrace(const char *fileName, int frames, const char *alg, const char *type){
+	if(strcmp(alg, "vms") == 0)
+		vms(fileName, frames, type);
+	else if(strcmp(alg, "lru") == 0)
+		lru(fileName, frames, type);
+	else if(strcmp(alg, "clk") == 0)
+		clk(fileName, frames, type);
+	else if(strcmp(alg, "opt") == 0)
+		opt(fileName, frames, type);
+	else
+		printf("Incorrect algorithm input\n");
 }
 
 //Reads command parameters from console
