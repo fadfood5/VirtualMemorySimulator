@@ -4,10 +4,10 @@
 #include <sys/time.h>
 
 //Reads trace file
-void readTrace(const char *a){
+void readTrace(const char *fileName, int frames, const char *alg, const char *type){
 	int c;
 	FILE *file;
-	file = fopen(a, "r");
+	file = fopen(fileName, "r");
 	unsigned addr;
 	char rw;
 	int i = 0;
@@ -15,21 +15,22 @@ void readTrace(const char *a){
 	if (file) {
 	    while ((c = getc(file)) != EOF){
 					//fscanf(file, "%x %c", arr[0], arr[1]);
-					putchar(c);
+					if(strcmp(type, "debug") == 0)
+							putchar(c);
 					i++;
 			}
 	    fclose(file);
 	}
 }
 
-//Reads commanf parameters from console
+//Reads command parameters from console
 int main(int argc, char **argv){
-		const char *a[2];
+		//const char *a[2];
     for (int i = 0; i < argc; ++i){
-        printf("argv[%d]: %s\n", i, argv[i]);
-				a[i] = argv[i];
-				printf("Added %s\n", a[i]);
+				//a[i] = argv[i];
+				printf("Added %s\n", argv[i]);
     }
-		readTrace(a[1]);
+		readTrace(argv[1], argv[2], argv[3], argv[4]);
+
 		return 0;
 }
