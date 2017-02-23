@@ -3,7 +3,20 @@
 #include <string.h>
 #include <sys/time.h>
 
+int numWrites = 0;
+int numReads = 0;
+
+struct PageTableEntry{
+	int pageNumber;
+	char pN[7];
+	char input_output;
+	int dirtyBit;
+	int counter;
+	int clk;
+};
+
 void vms(const char *fileName, int fr, const char *type){
+	int c;
 	FILE *file;
 	file = fopen(fileName, "r");
 	int i = 0;
@@ -22,24 +35,37 @@ void vms(const char *fileName, int fr, const char *type){
 }
 
 void lru(const char *fileName, int fr, const char *type){
+	int c;
 	FILE *file;
 	file = fopen(fileName, "r");
 	int i = 0;
-	unsigned a;
+	char a[7];
 	char b;
+	char temp;
+
+	struct PageTableEntry Frames[fr];
+	int count = 0;
 
 	if (file) {
 	    while ((c = getc(file)) != EOF){
-					fscanf(file, "%x %c", &a, &b);
-					if(strcmp(type, "debug") == 0)
-							printf("%u", a);
+					struct PageTableEntry p;
+					//Frames[count] = p;
+					//count++;
+					fscanf (file, "%s %c", a, &b);
+
+					if(strcmp(type, "debug") == 0){
+							printf("%s", a);
 							printf(" %c\n", b);
-					}
-					fclose(file);
+							strncpy(p.pN, a, 5);
+							printf("Decimal: %s \n", p.pN);
+						}
+				}
+			fclose(file);
 	}
 }
 
 void clk(const char *fileName, int fr, const char *type){
+	int c;
 	FILE *file;
 	file = fopen(fileName, "r");
 	int i = 0;
@@ -58,6 +84,7 @@ void clk(const char *fileName, int fr, const char *type){
 }
 
 void opt(const char *fileName, int fr, const char *type){
+	int c;
 	FILE *file;
 	file = fopen(fileName, "r");
 	int i = 0;
