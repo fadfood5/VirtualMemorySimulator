@@ -7,7 +7,6 @@ int numWrites = 0;
 int numReads = 0;
 
 struct PageTableEntry{
-	int pageNumber;
 	char pN[7];
 	char input_output;
 	int dirtyBit;
@@ -47,21 +46,36 @@ void lru(const char *fileName, int fr, const char *type){
 	int count = 0;
 
 	if (file) {
-	    while ((c = getc(file)) != EOF){
+	    //while ((c = getc(file)) != EOF){
 					struct PageTableEntry p;
-					//Frames[count] = p;
-					//count++;
 					fscanf (file, "%s %c", a, &b);
 
 					if(strcmp(type, "debug") == 0){
 							printf("%s", a);
 							printf(" %c\n", b);
 							strncpy(p.pN, a, 5);
-							printf("Decimal: %s \n", p.pN);
+							p.input_output = b;
+							printf("Page Number: %s\n", p.pN);
+							printf("Input: %c\n", p.input_output);
 						}
-				}
-			fclose(file);
+
+					for(int i = 0; i < fr; i++){
+						if(strlen(Frames[i].pN) == 0){
+							printf("It's fucking empty\n");
+						}
+					}
+					/*else if(strcmp(p.pN, Frames[i].pN) == 0){
+							printf("Already exists\n");
+							if(strcmp(Frames[i].input_output, "R") == 0)
+								Frames[i].input_output = 'W';
+							else
+								Frames[i].input_output = 'R';
+						}else{
+
+						}
+					}*/
 	}
+fclose(file);
 }
 
 void clk(const char *fileName, int fr, const char *type){
