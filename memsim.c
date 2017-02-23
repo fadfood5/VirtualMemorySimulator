@@ -41,8 +41,15 @@ void lru(const char *fileName, int fr, const char *type){
 	char a[7];
 	char b;
 	char temp;
-
+		printf("fr %d: ", fr);
 	struct PageTableEntry Frames[fr];
+	for(int i = 0; i < fr; i++){
+		struct PageTableEntry temp;
+		strncpy(temp.pN, "EMPTY", 5);
+		Frames[i] = temp;
+		printf("Temp: %s\n", temp.pN);
+		printf("Created empty struct\n");
+	}
 	int count = 0;
 
 	if (file) {
@@ -60,11 +67,15 @@ void lru(const char *fileName, int fr, const char *type){
 						}
 
 					for(int i = 0; i < fr; i++){
-						if(strlen(Frames[i].pN) == 0){
-							printf("It's fucking empty\n");
-						}
-					}
-					/*else if(strcmp(p.pN, Frames[i].pN) == 0){
+						if(strcmp(Frames[i].pN, "EMPTY") == 0){
+							Frames[i] = p;
+							if(strcmp(type, "debug") == 0){
+								printf("Free space available\n");
+								printf("Frame added: %s\n", Frames[i].pN);
+								printf("Breaking\n");
+							}
+							break;
+					}else if(strcmp(p.pN, Frames[i].pN) == 0){
 							printf("Already exists\n");
 							if(strcmp(Frames[i].input_output, "R") == 0)
 								Frames[i].input_output = 'W';
@@ -73,7 +84,7 @@ void lru(const char *fileName, int fr, const char *type){
 						}else{
 
 						}
-					}*/
+					}
 	}
 fclose(file);
 }
@@ -132,12 +143,13 @@ void readTrace(const char *fileName, int frames, const char *alg, const char *ty
 
 //Reads command parameters from console
 int main(int argc, char **argv){
-		//const char *a[2];
-    for (int i = 0; i < argc; ++i){
-				//a[i] = argv[i];
-				printf("Added %s\n", argv[i]);
-    }
-		readTrace(argv[1], argv[2], argv[3], argv[4]);
+	printf("%d\n", argc);
+    for (int i = 0; i < argc; ++i)
+				printf("Added %d: %s\n", i, argv[i]);
+
+		printf("frame: %s \n", argv[2]);
+		int c = atoi(argv[2]);
+		readTrace(argv[1], c, argv[3], argv[4]);
 
 		return 0;
 }
