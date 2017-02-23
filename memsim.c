@@ -14,6 +14,7 @@ struct PageTableEntry{
 	int clk;
 };
 
+/*
 void vms(const char *fileName, int fr, const char *type){
 	int c;
 	FILE *file;
@@ -31,7 +32,7 @@ void vms(const char *fileName, int fr, const char *type){
 					}
 					fclose(file);
 	}
-}
+}*/
 
 void lru(const char *fileName, int fr, const char *type){
 	int c;
@@ -69,6 +70,7 @@ void lru(const char *fileName, int fr, const char *type){
 					for(int i = 0; i < fr; i++){
 						if(strcmp(Frames[i].pN, "EMPTY") == 0){
 							Frames[i] = p;
+							numReads++;
 							if(strcmp(type, "debug") == 0){
 								printf("Free space available\n");
 								printf("Frame added: %s\n", Frames[i].pN);
@@ -81,9 +83,21 @@ void lru(const char *fileName, int fr, const char *type){
 								Frames[i].input_output = 'W';
 							else
 								Frames[i].input_output = 'R';
-						}else{
-
+							Frames[i].counter = 0;
+						}else if(i+1 == fr){
+								int max = 0;
+								int tempJ = 0;
+								for(int j = 0; j < fr; j++){
+									if(Frames[j].counter > max){
+										max = Frames[j].counter;
+										tempJ = j;
+									}
+								}
+								if(p.input_output = 'W'){
+									numWrites++;
+								Frames[tempJ]
 						}
+					}
 					}
 	}
 fclose(file);
@@ -129,9 +143,9 @@ void opt(const char *fileName, int fr, const char *type){
 
 //Reads trace file
 void readTrace(const char *fileName, int frames, const char *alg, const char *type){
-	if(strcmp(alg, "vms") == 0)
-		vms(fileName, frames, type);
-	else if(strcmp(alg, "lru") == 0)
+	/*if(strcmp(alg, "vms") == 0)
+		vms(fileName, frames, type);*/
+	if(strcmp(alg, "lru") == 0)
 		lru(fileName, frames, type);
 	else if(strcmp(alg, "clk") == 0)
 		clk(fileName, frames, type);
