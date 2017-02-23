@@ -14,26 +14,6 @@ struct PageTableEntry{
 	int clk;
 };
 
-/*
-void vms(const char *fileName, int fr, const char *type){
-	int c;
-	FILE *file;
-	file = fopen(fileName, "r");
-	int i = 0;
-	unsigned a;
-	char b;
-
-	if (file) {
-	    while ((c = getc(file)) != EOF){
-					fscanf(file, "%x %c", &a, &b);
-					if(strcmp(type, "debug") == 0)
-							printf("%u", a);
-							printf(" %c\n", b);
-					}
-					fclose(file);
-	}
-}*/
-
 void lru(const char *fileName, int fr, const char *type){
 	int c;
 	FILE *file;
@@ -42,27 +22,34 @@ void lru(const char *fileName, int fr, const char *type){
 	char a[7];
 	char b;
 	char temp;
-		printf("fr %d: ", fr);
+
 	struct PageTableEntry Frames[fr];
+
 	for(int i = 0; i < fr; i++){
 		struct PageTableEntry temp;
 		strncpy(temp.pN, "EMPTY", 5);
 		Frames[i] = temp;
-		printf("Temp: %s\n", temp.pN);
-		printf("Created empty struct\n");
+		if(strcmp(type, "debug") == 0)
+			printf("Created empty struct\n");
 	}
+
 	int count = 0;
 
 	if (file) {
-	    //while ((c = getc(file)) != EOF){
+	    while ((c = getc(file)) != EOF){
+					count++;
 					struct PageTableEntry p;
 					fscanf (file, "%s %c", a, &b);
 
+					strncpy(p.pN, a, 5);
+					p.input_output = 0;
+					if(b == 'W')
+						p.dirtyBit = 1;
+					else
+						p.dirtyBit = 0;
 					if(strcmp(type, "debug") == 0){
 							printf("%s", a);
 							printf(" %c\n", b);
-							strncpy(p.pN, a, 5);
-							p.input_output = b;
 							printf("Page Number: %s\n", p.pN);
 							printf("Input: %c\n", p.input_output);
 						}
@@ -78,8 +65,9 @@ void lru(const char *fileName, int fr, const char *type){
 							}
 							break;
 					}else if(strcmp(p.pN, Frames[i].pN) == 0){
-							printf("Already exists\n");
-							if(strcmp(Frames[i].input_output, "R") == 0)
+							if(strcmp(type, "debug") == 0)
+								printf("Already exists\n");
+							if(Frames[i].input_output == 'R')
 								Frames[i].input_output = 'W';
 							else
 								Frames[i].input_output = 'R';
@@ -93,14 +81,18 @@ void lru(const char *fileName, int fr, const char *type){
 										tempJ = j;
 									}
 								}
-								if(p.input_output = 'W'){
+								if(Frames[tempJ].input_output == 'W')
 									numWrites++;
-								Frames[tempJ]
-						}
+								Frames[tempJ] = p;
 					}
 					}
 	}
+}
 fclose(file);
+printf("Final form is: \n");
+for(int i =0; i < fr; i++)
+	printf("%s\n", Frames[i].pN);
+printf("Count: %d", count);
 }
 
 void clk(const char *fileName, int fr, const char *type){
