@@ -34,8 +34,13 @@ void lru(const char *fileName, int fr, const char *type){
 	}
 
 	int count = 0;
+	int count1 = 0;
+	int count2 = 0;
+	int count3 = 0;
+	int count4 = 0;
 
 	if (file) {
+			//(int i = 0; i < 10; i++){
 	    while ((c = getc(file)) != EOF){
 					count++;
 					struct PageTableEntry p;
@@ -56,6 +61,7 @@ void lru(const char *fileName, int fr, const char *type){
 
 					for(int i = 0; i < fr; i++){
 						if(strcmp(Frames[i].pN, "EMPTY") == 0){
+							count1++;
 							Frames[i] = p;
 							numReads++;
 							if(strcmp(type, "debug") == 0){
@@ -65,6 +71,7 @@ void lru(const char *fileName, int fr, const char *type){
 							}
 							break;
 					}else if(strcmp(p.pN, Frames[i].pN) == 0){
+						count2++;
 							if(strcmp(type, "debug") == 0)
 								printf("Already exists\n");
 							if(Frames[i].input_output == 'R')
@@ -72,7 +79,10 @@ void lru(const char *fileName, int fr, const char *type){
 							else
 								Frames[i].input_output = 'R';
 							Frames[i].counter = 0;
-						}else if(i+1 == fr){
+						}else{
+							count4++;
+							if(i+1 == fr){
+							count3++;
 								int max = 0;
 								int tempJ = 0;
 								for(int j = 0; j < fr; j++){
@@ -85,33 +95,131 @@ void lru(const char *fileName, int fr, const char *type){
 									numWrites++;
 								Frames[tempJ] = p;
 					}
+				}
 					}
 	}
 }
 fclose(file);
 printf("Final form is: \n");
-for(int i =0; i < fr; i++)
+for(int i =0; i < fr; i++){
+	Frames[i].counter++;
 	printf("%s\n", Frames[i].pN);
-printf("Count: %d", count);
+	printf("%d\n", Frames[i].counter);
 }
+printf("Count: %d\n", count);
+printf("Count1: %d\n", count1);
+printf("Count2: %d\n", count2);
+printf("Count3: %d\n", count3);
+printf("Count4: %d\n", count4);
+}
+
+
 
 void clk(const char *fileName, int fr, const char *type){
 	int c;
 	FILE *file;
 	file = fopen(fileName, "r");
 	int i = 0;
-	unsigned a;
+	char a[7];
 	char b;
+	char temp;
+
+	struct PageTableEntry Frames[fr];
+
+	for(int i = 0; i < fr; i++){
+		struct PageTableEntry temp;
+		strncpy(temp.pN, "EMPTY", 5);
+		Frames[i] = temp;
+		if(strcmp(type, "debug") == 0)
+			printf("Created empty struct\n");
+	}
+
+	int count = 0;
+	int count1 = 0;
+	int count2 = 0;
+	int count3 = 0;
+	int count4 = 0;
 
 	if (file) {
+			//(int i = 0; i < 10; i++){
 	    while ((c = getc(file)) != EOF){
-					fscanf(file, "%x %c", &a, &b);
-					if(strcmp(type, "debug") == 0)
-							printf("%u", a);
+					count++;
+					struct PageTableEntry p;
+					fscanf (file, "%s %c", a, &b);
+
+					strncpy(p.pN, a, 5);
+					p.input_output = 0;
+					if(b == 'W')
+						p.dirtyBit = 1;
+					else
+						p.dirtyBit = 0;
+					if(strcmp(type, "debug") == 0){
+							printf("%s", a);
 							printf(" %c\n", b);
+							printf("Page Number: %s\n", p.pN);
+							printf("Input: %c\n", p.input_output);
+						}
+
+					for(int i = 0; i < fr; i++){
+						if(strcmp(Frames[i].pN, "EMPTY") == 0){
+							count1++;
+							if(p.input_output == 'R'){
+								p.counter = 0;
+								Frames[i] = p;
+							}else{
+								p.counter = 1;
+								Frames[i] = p;
+							}
+							numReads++;
+							if(strcmp(type, "debug") == 0){
+								printf("Free space available\n");
+								printf("Frame added: %s\n", Frames[i].pN);
+								printf("Breaking\n");
+							}
+							break;
+					}else if(strcmp(p.pN, Frames[i].pN) == 0){
+							count2++;
+							if(strcmp(type, "debug") == 0)
+								printf("Already exists\n");
+							if(Frames[i].input_output == 'W'){
+								Frames[i].input_output = 'R';
+								Frames[i].dirtyBit = 1;
+							}
+							Frames[i].clk = 1;
+						}else{
+							count4++;
+							if(i+1 == fr){
+							count3++;
+								int max = 0;
+								int tempJ = 0;
+								for(int j = 0; j < fr; j++){
+									if(Frames[j].counter > max){
+										max = Frames[j].counter;
+										tempJ = j;
+									}
+								}
+								if(Frames[tempJ].input_output == 'W')
+									numWrites++;
+								Frames[tempJ] = p;
+								for(int k = 0; i < fr; i++)
+									Frames[k].counter++;
 					}
-					fclose(file);
+				}
+			}
 	}
+}
+fclose(file);
+printf("Final form is: \n");
+for(int i =0; i < fr; i++){
+	Frames[i].counter++;
+	printf("%s\n", Frames[i].pN);
+	printf("%d\n", Frames[i].counter);
+}
+	printf("Count: %d\n", count);
+	printf("Count1: %d\n", count1);
+	printf("Count2: %d\n", count2);
+	printf("Count3: %d\n", count3);
+	printf("Count4: %d\n", count4);
 }
 
 void opt(const char *fileName, int fr, const char *type){
