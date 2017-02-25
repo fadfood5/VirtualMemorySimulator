@@ -42,7 +42,7 @@ void lru(const char *fileName, int fr, const char *type){
 					//Cut down string to page number
 					strncpy(p.pN, a, 5);
 					//Set read/write to empty
-					p.input_output = 0;
+					strncpy(&p.input_output, &b, 1);
 					//Set dirty bit based on read/write being scanned
 					if(b == 'W')
 						p.dirtyBit = 1;
@@ -78,9 +78,9 @@ void lru(const char *fileName, int fr, const char *type){
 							if(strcmp(type, "debug") == 0)
 								printf("Already exists\n");
 							//Switch input_output
-							if(Frames[i].input_output == 'R')
+							if(Frames[i].input_output == 'R' && p.input_output == 'W')
 								Frames[i].input_output = 'W';
-							else
+							else if(Frames[i].input_output == 'W' && p.input_output == 'R')
 								Frames[i].input_output = 'R';
 							//Set counter to 0
 							Frames[i].counter = 0;
@@ -104,6 +104,11 @@ void lru(const char *fileName, int fr, const char *type){
 						}
 					}
 			}
+			numReads++;
+			if(strcmp(type, "debug") == 0)
+				printf("Disk Read Performed\n");
+			for(int i =0; i < fr; i++){
+			Frames[i].counter++;
 	}
 }
 	//Close file
@@ -111,10 +116,14 @@ void lru(const char *fileName, int fr, const char *type){
 	//Print final array elements
 	printf("Final form is: \n");
 	for(int i =0; i < fr; i++){
-		Frames[i].counter++;
 		printf("%s\n", Frames[i].pN);
 		printf("%d\n", Frames[i].counter);
 	}
+	printf("Num of traces: \n");
+	printf("Num of frames: %d\n", fr);
+	printf("Num of disk reads: %d\n", numReads);
+	printf("Num of disk writes: %d\n", numWrites);
+}
 }
 
 
