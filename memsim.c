@@ -19,7 +19,7 @@ void lru(const char *fileName, int fr, const char *type){
 	FILE *file;
 	file = fopen(fileName, "r");
 	int i = 0;
-	char a[7];
+	char a[5];
 	char b;
 	char temp;
 
@@ -78,8 +78,10 @@ void lru(const char *fileName, int fr, const char *type){
 							if(strcmp(type, "debug") == 0)
 								printf("Already exists\n");
 							//Switch input_output
-							if(Frames[i].input_output == 'R' && p.input_output == 'W')
+							if(Frames[i].input_output == 'R' && p.input_output == 'W'){
 								Frames[i].input_output = 'W';
+								Frames[i].dirtyBit = 1;
+							}
 							else if(Frames[i].input_output == 'W' && p.input_output == 'R')
 								Frames[i].input_output = 'R';
 							//Set counter to 0
@@ -87,7 +89,7 @@ void lru(const char *fileName, int fr, const char *type){
 					}else if(i+1 == fr){
 								//If array full and page number not found
 								//Get highest counter
-								int max = 0;
+								int max = Frames[0].counter;
 								int tempJ = 0;
 								for(int j = 0; j < fr; j++){
 									if(Frames[j].counter > max){
@@ -101,10 +103,10 @@ void lru(const char *fileName, int fr, const char *type){
 									if(strcmp(type, "debug") == 0)
 										printf("Disk Write Performed\n");
 								Frames[tempJ] = p;
+								numReads++;
 						}
 					}
 			}
-			numReads++;
 			if(strcmp(type, "debug") == 0)
 				printf("Disk Read Performed\n");
 			for(int i =0; i < fr; i++){
