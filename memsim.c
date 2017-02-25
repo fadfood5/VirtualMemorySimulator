@@ -64,6 +64,8 @@ void lru(const char *fileName, int fr, const char *type){
 							count1++;
 							Frames[i] = p;
 							numReads++;
+							if(strcmp(type, "debug") == 0)
+								printf("Disk Read Performed\n");
 							if(strcmp(type, "debug") == 0){
 								printf("Free space available\n");
 								printf("Frame added: %s\n", Frames[i].pN);
@@ -91,12 +93,15 @@ void lru(const char *fileName, int fr, const char *type){
 										tempJ = j;
 									}
 								}
-								if(Frames[tempJ].input_output == 'W')
+								if(Frames[tempJ].input_output == 'W'){
 									numWrites++;
+									if(strcmp(type, "debug") == 0)
+										printf("Disk Write Performed\n");
 								Frames[tempJ] = p;
+						}
 					}
 				}
-					}
+			}
 	}
 }
 fclose(file);
@@ -106,11 +111,11 @@ for(int i =0; i < fr; i++){
 	printf("%s\n", Frames[i].pN);
 	printf("%d\n", Frames[i].counter);
 }
-printf("Count: %d\n", count);
-printf("Count1: %d\n", count1);
-printf("Count2: %d\n", count2);
-printf("Count3: %d\n", count3);
-printf("Count4: %d\n", count4);
+	printf("Count: %d\n", count);
+	printf("Count1: %d\n", count1);
+	printf("Count2: %d\n", count2);
+	printf("Count3: %d\n", count3);
+	printf("Count4: %d\n", count4);
 }
 
 
@@ -171,6 +176,8 @@ void clk(const char *fileName, int fr, const char *type){
 								Frames[i] = p;
 							}
 							numReads++;
+							if(strcmp(type, "debug") == 0)
+								printf("Disk Read Performed\n");
 							if(strcmp(type, "debug") == 0){
 								printf("Free space available\n");
 								printf("Frame added: %s\n", Frames[i].pN);
@@ -190,19 +197,22 @@ void clk(const char *fileName, int fr, const char *type){
 							count4++;
 							if(i+1 == fr){
 							count3++;
-								int max = 0;
-								int tempJ = 0;
 								for(int j = 0; j < fr; j++){
-									if(Frames[j].counter > max){
-										max = Frames[j].counter;
-										tempJ = j;
+									if(Frames[j].clk == 1)
+										Frames[j].clk = 0;
+									else{
+									numWrites++;
+									numReads++;
+									if(strcmp(type, "debug") == 0){
+										printf("Disk Write Performed\n");
+										printf("Disk Read Performed\n");
+									}
+										if(p.input_output == 'W')
+											Frames[j] = p;
+										else
+											Frames[0] = p;
 									}
 								}
-								if(Frames[tempJ].input_output == 'W')
-									numWrites++;
-								Frames[tempJ] = p;
-								for(int k = 0; i < fr; i++)
-									Frames[k].counter++;
 					}
 				}
 			}
