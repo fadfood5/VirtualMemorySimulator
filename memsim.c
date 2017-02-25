@@ -48,7 +48,7 @@ void lru(const char *fileName, int fr, const char *type){
 						p.dirtyBit = 1;
 					else
 						p.dirtyBit = 0;
-					
+
 					p.counter = 0;
 					p.clk = 0;
 
@@ -110,7 +110,7 @@ void lru(const char *fileName, int fr, const char *type){
 									if(strcmp(type, "debug") == 0)
 										printf("Disk Write Performed\n");
 								}
-								
+
 								Frames[tempJ] = p;
 								numReads++;
 						}
@@ -137,7 +137,7 @@ void lru(const char *fileName, int fr, const char *type){
 	printf("Num of disk writes: %d\n", numWrites);
 
 }
-
+}
 
 
 void clk(const char *fileName, int fr, const char *type){
