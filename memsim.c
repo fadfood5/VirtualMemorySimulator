@@ -7,7 +7,7 @@ int numWrites = 0;
 int numReads = 0;
 
 struct PageTableEntry{
-	char pN[7];
+	char pN[5];
 	char input_output;
 	int dirtyBit;
 	int counter;
@@ -48,6 +48,9 @@ void lru(const char *fileName, int fr, const char *type){
 						p.dirtyBit = 1;
 					else
 						p.dirtyBit = 0;
+					
+					p.counter = 0;
+					p.clk = 0;
 
 					//Debug
 					if(strcmp(type, "debug") == 0){
@@ -55,7 +58,7 @@ void lru(const char *fileName, int fr, const char *type){
 							printf(" %c\n", b);
 							printf("Page Number: %s\n", p.pN);
 							printf("Input: %c\n", p.input_output);
-						}
+					}
 
 					//Go through array of structs
 					for(int i = 0; i < fr; i++){
@@ -72,7 +75,9 @@ void lru(const char *fileName, int fr, const char *type){
 								printf("Breaking\n");
 							}
 							break;
-					}else if(strcmp(p.pN, Frames[i].pN) == 0){
+					}
+
+						else if(strcmp(p.pN, Frames[i].pN) == 0){
 							//If page number is already in array
 							//Debug
 							if(strcmp(type, "debug") == 0)
@@ -86,7 +91,9 @@ void lru(const char *fileName, int fr, const char *type){
 								Frames[i].input_output = 'R';
 							//Set counter to 0
 							Frames[i].counter = 0;
-					}else if(i+1 == fr){
+						}
+
+						else if(i+1 == fr){
 								//If array full and page number not found
 								//Get highest counter
 								int max = Frames[0].counter;
@@ -102,17 +109,20 @@ void lru(const char *fileName, int fr, const char *type){
 									numWrites++;
 									if(strcmp(type, "debug") == 0)
 										printf("Disk Write Performed\n");
+								}
+								
 								Frames[tempJ] = p;
 								numReads++;
 						}
 					}
+
+				if(strcmp(type, "debug") == 0)
+					printf("Disk read performed\n");
+				for(int i = 0; i < fr; i++){
+					Frames[i].counter += 1;
+				}
 			}
-			if(strcmp(type, "debug") == 0)
-				printf("Disk Read Performed\n");
-			for(int i =0; i < fr; i++){
-			Frames[i].counter++;
-	}
-}
+
 	//Close file
 	fclose(file);
 	//Print final array elements
@@ -125,7 +135,7 @@ void lru(const char *fileName, int fr, const char *type){
 	printf("Num of frames: %d\n", fr);
 	printf("Num of disk reads: %d\n", numReads);
 	printf("Num of disk writes: %d\n", numWrites);
-}
+
 }
 
 
