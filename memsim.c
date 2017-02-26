@@ -177,7 +177,7 @@ void clk(const char *fileName, int fr, const char *type){
 						p.dirtyBit = 0;
 
 					p.counter = 0;
-					p.clk = 0;
+					p.clk = 1;
 
 					if(strcmp(type, "debug") == 0){
 							printf("%s", a);
@@ -190,12 +190,6 @@ void clk(const char *fileName, int fr, const char *type){
 					for(int i = 0; i < fr; i++){
 						//If array not full and has space
 						if(strcmp(Frames[i].pN, "EMPTY") == 0){
-							//Change counter and take space
-							if(p.input_output == 'R'){
-								p.counter = 0;
-							else
-								p.counter = 1;
-
 							Frames[i] = p;
 							numReads++;
 							//Debug
@@ -217,13 +211,9 @@ void clk(const char *fileName, int fr, const char *type){
 							}
 							else if(Frames[i].input_output == 'W' && p.input_output == 'R'){
 								Frames[i].input_output = 'R';
-								dirtyBit = 0;
 							}
-							//Set counter to 0
-							Frames[i].counter = 0;
 							Frames[i].clk = 1;
-						}else
-							if(i+1 == fr){
+						}else if(i+1 == fr){
 								for(int j = 0; j < fr; j++){
 									if(Frames[j].clk == 1)
 										Frames[j].clk = 0;
@@ -246,6 +236,7 @@ void clk(const char *fileName, int fr, const char *type){
 			printf("Disk read performed\n");
 		for(int j = 0; j < fr; j++){
 			Frames[j].counter += 1;
+		}
 	}
 }
 fclose(file);
