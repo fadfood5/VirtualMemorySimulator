@@ -190,6 +190,7 @@ void clk(const char *fileName, int fr, const char *type){
 					for(int i = 0; i < fr; i++){
 						//If array not full and has space
 						if(strcmp(Frames[i].pN, "EMPTY") == 0){
+							//Take free space
 							Frames[i] = p;
 							numReads++;
 							//Debug
@@ -200,7 +201,9 @@ void clk(const char *fileName, int fr, const char *type){
 								printf("Breaking\n");
 							}
 							break;
-					}else if(strcmp(p.pN, Frames[i].pN) == 0){
+						}
+
+						else if(strcmp(p.pN, Frames[i].pN) == 0){
 							//If page number is already in array
 							//Debug
 							if(strcmp(type, "debug") == 0)
@@ -212,40 +215,60 @@ void clk(const char *fileName, int fr, const char *type){
 							else if(Frames[i].input_output == 'W' && p.input_output == 'R'){
 								Frames[i].input_output = 'R';
 							}
+							//Set clk to 1
 							Frames[i].clk = 1;
-						}else if(i+1 == fr){
+							break;
+						}
+						
+						
+						else{
+							if(i+1 == fr){
 								for(int j = 0; j < fr; j++){
-									if(Frames[j].clk == 1)
-										Frames[j].clk = 0;
-									else{
-									numWrites++;
-									numReads++;
-									if(strcmp(type, "debug") == 0){
-										printf("Disk Write Performed\n");
-										printf("Disk Read Performed\n");
-									}
-										if(p.input_output == 'W')
-											Frames[j] = p;
+									if(Frames[j].clk == 1){
+										if(fr == j - 1){
+											if(p.input_output == 'W')
+												numWrites++;
+											numReads++;
+											if(strcmp(type, "debug") == 0){
+												printf("Disk Read Performed\n");
+												if(p.input_output == 'W')
+													printf("Disk Write Performed\n");
+											}
+										}
 										else
-											Frames[0] = p;
+											Frames[j].clk = 0;
+									}	
+									
+									else if(Frames[j].clk == 0){
+										if(p.input_output == 'W')
+											numWrites++;							
+										numReads++;
+										if(strcmp(type, "debug") == 0){
+											printf("Disk Read Performed\n");
+											if(p.input_output == 'W')
+												printf("Disk Write Performed\n");
+										}
+									
+										Frames[j] = p;
+										break;
+										
 									}
 								}
+							}
+						}
 					}
-			}
-		if(strcmp(type, "debug") == 0)
-			printf("Disk read performed\n");
-		for(int j = 0; j < fr; j++){
-			Frames[j].counter += 1;
+
 		}
 	}
-}
-fclose(file);
-printf("Final form is: \n");
-for(int i =0; i < fr; i++){
-	Frames[i].counter++;
-	printf("%s\n", Frames[i].pN);
-	printf("%d\n", Frames[i].counter);
-}
+
+	fclose(file);
+	printf("Final form is: \n");
+	for(int i =0; i < fr; i++){
+		Frames[i].counter++;
+		printf("%s\n", Frames[i].pN);
+		printf("%d\n", Frames[i].counter);
+	}
+
 	printf("Num of traces: \n");
 	printf("Num of frames: %d\n", fr);
 	printf("Num of disk reads: %d\n", numReads);
