@@ -429,14 +429,6 @@ void opt(const char *fileName, int fr, const char *type){
 									}
 								}
 							}
-
-							if(strcmp(type, "debug")){
-								printf("Num of traces: \n");
-								printf("Num of frames: %d\n", fr);
-								printf("Num of disk reads: %d\n", numReads);
-								printf("Num of disk writes: %d\n", numWrites);
-							}
-
 							}
 						}
 					}
@@ -451,7 +443,6 @@ void opt(const char *fileName, int fr, const char *type){
 		printf("%s\n", Frames[i].pN);
 		printf("%d\n", Frames[i].counter);
 	}
-
 	printf("Num of traces: \n");
 	printf("Num of frames: %d\n", fr);
 	printf("Num of disk reads: %d\n", numReads);
