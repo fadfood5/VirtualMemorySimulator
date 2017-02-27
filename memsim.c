@@ -162,15 +162,14 @@ void clk(const char *fileName, int fr, const char *type){
 	if (file) {
 			//Run through file by line
 	    while ((c = getc(file)) != EOF){
-					//Create a temporary struct
+					//Create a page table entry struct
 					struct PageTableEntry p;
 					fscanf (file, "%s %c", a, &b);
 					//Cut down string to page number
 					strncpy(p.pN, a, 5);
-					//Set read/write to empty
+					//Set read/write to b
 					strncpy(&p.input_output, &b, 1);
 					//Set dirty bit based on read/write being scanned
-					p.input_output = 0;
 					if(b == 'W')
 						p.dirtyBit = 1;
 					else
@@ -222,16 +221,20 @@ void clk(const char *fileName, int fr, const char *type){
 						
 						
 						else{
+							//If array full and not found
 							if(i+1 == fr){
+								//Scan array for clk bit == 0, if 1 set to 0
 								for(int j = 0; j < fr; j++){
 									if(Frames[j].clk == 1){
+										//If they were all 1, Frames[0] gets swapped out
 										if(fr == j - 1){
-											if(p.input_output == 'W')
+											if(Frames[0].input_output == 'W')
 												numWrites++;
 											numReads++;
+											Frames[0] = p;
 											if(strcmp(type, "debug") == 0){
 												printf("Disk Read Performed\n");
-												if(p.input_output == 'W')
+												if(Frames[0].input_output == 'W')
 													printf("Disk Write Performed\n");
 											}
 										}
