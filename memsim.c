@@ -299,10 +299,10 @@ void opt(const char *fileName, int fr, const char *type){
 	int i = 0;
 	char a[5];
 	char b;
+	char d[8];
 	char e;
 	char temp;
 	int count = 0;
-	int count2 = 0;
 
 	struct PageTableEntry Frames[fr];
 
@@ -386,27 +386,22 @@ void opt(const char *fileName, int fr, const char *type){
 
 								int ch;
 								int newlines = 0;
+								int count2 = 0;
 								if(file2){
 									while ((ch = getc(file)) != EOF) {
-											char d[8];
 							        if (newlines >= temp - 1 && newlines<= temp+fr-1){
 													fscanf (file2, "%s %c", d, &e);
-												//Cut down string to page number
-												// for(int n=0; n<5; n++){
-												// 	FramesTemp[count2][n] = d[n];
-												// }
-												//strncpy(d, d, 5);
 
 													printf("D is: %s\n", d);
-													printf("Count: %d\n", count2);
-												strncpy(FramesTemp[count2], d, 5);
-
-													printf("kms2\n");
-												//FramesTemp[count2] = d.c_str();
-												printf("%s\n", FramesTemp[count2]);
-												count2++;
+													printf("Count: %d\n", count);
+													FramesTemp[count2] = malloc(strlen(d-3) + 1);
+													strcpy(FramesTemp[count2], d);
+													printf("%s\n", FramesTemp[count2]);
+													count2++;
 											}
 							        newlines++;
+											if(newlines > temp+fr-1)
+												break;
 									}
 							}
 							fclose(file2);
