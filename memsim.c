@@ -334,7 +334,7 @@ void opt(const char *fileName, int fra, const char *type){
 					fscanf (file, "%s %c", p.pN, &b);
 					//Cut down string to page number
 					p.pN[5] = '\0';
-					//if(strcmp(type, "debug") == 0)
+					if(strcmp(type, "debug") == 0)
 						printf("%s\n", p.pN);
 					//Set read/write to b
 					strncpy(&p.input_output, &b, 1);
@@ -396,6 +396,7 @@ void opt(const char *fileName, int fra, const char *type){
 
 								char d[8];
 								int ch;
+								countInner = 0;
 								int newlines = 0;
 								char FramesTemp[fr][8];
 								for(int i=0; i<fr; i++)
@@ -405,26 +406,28 @@ void opt(const char *fileName, int fra, const char *type){
 								if(file2){
 									while ((ch = getc(file2)) != EOF) {
 							        if (newlines >= temp - 1 && newlines< temp+fr-1){
-													printf("Temp: %d\n", temp-1);
-													printf("Line: %d\n", newlines);
-													printf("fr: %d\n", temp+fr-1);
-													//printf("countInner: %d\n", countInner);
+													// printf("Temp: %d\n", temp-1);
+													// printf("Line: %d\n", newlines);
+													// printf("fr: %d\n", temp+fr-1);
+													// printf("countInner: %d\n", countInner);
 													fscanf (file2, "%s %c", FramesTemp[countInner], &e);
 													FramesTemp[countInner][5] = '\0';
 													//printf("%s %c\n", FramesTemp[countInner], e);
 													if(strcmp(type, "debug") == 0)
 														printf("%s\n", FramesTemp[countInner]);
-													for(int m = 0; m < fr; m++){
-														printf("FramesTemp %d: %s\n", m, FramesTemp[m]);
-													}
-													printf("\n");
+													// for(int m = 0; m < fr; m++){
+													// 	printf("FramesTemp %d: %s\n", m, FramesTemp[m]);
+													// }
+													// printf("\n");
 												countInner++;
 											}
+											if(newlines >= temp+fr+1)
+												break;
 							        newlines++;
 									}
 							}
 							fclose(file2);
-							printf("finished\n");
+							// printf("finished\n");
 							for(int i = 0; i < fr; i++){
 								for(int j = 0; j < fr; j++){
 									if(strcmp(Frames[i].pN, FramesTemp[j]) == 0){
@@ -444,7 +447,7 @@ void opt(const char *fileName, int fra, const char *type){
 								if(Frames[l].found == 0){
 								test = 1;
 								tempL = l;
-								printf("Test is 1\n");
+								// printf("Test is 1\n");
 							}else{
 								if(max < Frames[l].index)
 									max = Frames[l].index;
@@ -467,7 +470,7 @@ void opt(const char *fileName, int fra, const char *type){
 						}
 					}
 					count++;
-					printf("Count: %d\n", count);
+					 //printf("Count: %d\n", count);
 		}
 	}
 
