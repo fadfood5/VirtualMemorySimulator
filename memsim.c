@@ -22,10 +22,8 @@ void lru(const char *fileName, int fr, const char *type){
 	int c;
 	FILE *file;
 	file = fopen(fileName, "r");
-	int i = 0;
 	char a[5];
 	char b;
-	char temp;
 
 	struct PageTableEntry Frames[fr];
 
@@ -137,8 +135,7 @@ void lru(const char *fileName, int fr, const char *type){
 	if(strcmp(type, "debug") == 0){
 		printf("Final form is: \n");
 		for(int i =0; i < fr; i++){
-			printf("%s\n", Frames[i].pN);
-			printf("%d\n", Frames[i].counter);
+			printf("%s ", Frames[i].pN);
 		}
 	}
 	printf("Num of traces: %d\n", traces);
@@ -155,10 +152,8 @@ void clk(const char *fileName, int fr, const char *type){
 	int c;
 	FILE *file;
 	file = fopen(fileName, "r");
-	int i = 0;
 	char a[5];
 	char b;
-	char temp;
 
 	struct PageTableEntry Frames[fr];
 
@@ -280,9 +275,7 @@ void clk(const char *fileName, int fr, const char *type){
 	fclose(file);
 	printf("Final form is: \n");
 	for(int i =0; i < fr; i++){
-		Frames[i].counter++;
-		printf("%s\n", Frames[i].pN);
-		printf("%d\n", Frames[i].counter);
+		printf("%s ", Frames[i].pN);
 	}
 
 	printf("Num of traces: %d\n", traces);
@@ -296,12 +289,10 @@ void opt(const char *fileName, int fr, const char *type){
 	int c;
 	FILE *file;
 	file = fopen(fileName, "r");
-	int i = 0;
 	char a[5];
 	char b;
 	char d[8];
 	char e;
-	char temp;
 	int count = 0;
 
 	struct PageTableEntry Frames[fr];
