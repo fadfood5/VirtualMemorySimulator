@@ -173,9 +173,10 @@ void clk(const char *fileName, int fr, const char *type){
 					traces++;
 					//Create a page table entry struct
 					struct PageTableEntry p;
-					fscanf (file, "%s %c", a, &b);
+					fscanf(file, "%s %c ", a, &b);
 					//Cut down string to page number
 					strncpy(p.pN, a, 5);
+					
 					//Set read/write to b
 					strncpy(&p.input_output, &b, 1);
 					//Set dirty bit based on read/write being scanned
@@ -277,7 +278,7 @@ void clk(const char *fileName, int fr, const char *type){
 	fclose(file);
 	printf("Final form is: \n");
 	for(int i =0; i < fr; i++){
-		printf("%s %c \n", Frames[i].pN, Frames[i].input_output);
+		printf("%s\n", Frames[i].pN);
 	}
 
 	printf("\nNum of traces: %d\n", traces);
@@ -328,13 +329,15 @@ void opt(const char *fileName, int fr, const char *type){
 
 					p.counter = 0;
 					p.clk = 0;
+					p.index = 0;
+					p.found = 0;
 
 					if(strcmp(type, "debug") == 0){
 							printf("%s", a);
 							printf(" %c\n", b);
 							printf("Page Number: %s\n", p.pN);
 							printf("Input: %c\n", p.input_output);
-						}
+					}
 
 					//Go through array of structs
 					for(int i = 0; i < fr; i++){
@@ -352,7 +355,9 @@ void opt(const char *fileName, int fr, const char *type){
 								printf("Breaking\n");
 							}
 							break;
-						}else if(strcmp(p.pN, Frames[i].pN) == 0){
+						}
+
+						else if(strcmp(p.pN, Frames[i].pN) == 0){
 							numHits++;
 							c2++;
 							//If page number is already in array
@@ -367,7 +372,9 @@ void opt(const char *fileName, int fr, const char *type){
 								Frames[i].input_output = 'R';
 							}
 							break;
-						}else{
+						}
+
+						else{
 							//If array full and not found
 							if(i+1 == fr){
 								c3++;
@@ -382,22 +389,28 @@ void opt(const char *fileName, int fr, const char *type){
 								int count2 = 0;
 								if(file2){
 									while ((ch = getc(file)) != EOF) {
-							        if (newlines >= temp - 1 && newlines<= temp+fr-1){
-													fscanf (file2, "%s %c", d, &e);
+									        if (newlines >= temp - 1 && newlines<= temp+fr-1){
+											fscanf (file2, "%s %c", d, &e);
 
-													printf("D is: %s\n", d);
-													printf("Count: %d\n", count);
-													FramesTemp[count2] = malloc(strlen(d-3) + 1);
-													strcpy(FramesTemp[count2], d);
-													printf("%s\n", FramesTemp[count2]);
-													count2++;
+											if(strcmp(type, "debug") == 0){
+												printf("D is: %s\n", d);
+												printf("Count: %d\n", count);
 											}
-							        newlines++;
+
+											FramesTemp[count2] = malloc(strlen(d-3) + 1);
+											strcpy(FramesTemp[count2], d);
+											printf("%s\n", FramesTemp[count2]);													count2++;
+										}
+
+									        newlines++;
+
 											if(newlines > temp+fr-1)
 												break;
 									}
-							}
+								}
+
 							fclose(file2);
+
 							for(int i = 0; i < fr; i++){
 								for(int j = 0; j < fr; j++){
 									if(strcmp(Frames[i].pN, FramesTemp[j]) == 0){
@@ -415,19 +428,24 @@ void opt(const char *fileName, int fr, const char *type){
 							int tempL = 0;
 							for(int l = 0; l<fr; l++){
 								if(Frames[l].found == 0){
-								test = 1;
-								tempL = l;
-								break;
-							}else{
-								if(max < Frames[l].index)
-									max = Frames[l].index;
+									test = 1;
+									tempL = l;
+									break;
+								}
+
+								else{
+									if(max < Frames[l].index)
+										max = Frames[l].index;
+								}
 							}
-						}
+
 							if(test == 1){
 								Frames[tempL] = p;
 								numReads++;
 								numWrites++;
-							}else{
+							}
+
+							else{
 								for(int m = 0; m<fr; m++){
 									if(max == Frames[m].index){
 										numReads++;
@@ -448,9 +466,7 @@ void opt(const char *fileName, int fr, const char *type){
 	fclose(file);
 	printf("Final form is: \n");
 	for(int i =0; i < fr; i++){
-		Frames[i].counter++;
 		printf("%s\n", Frames[i].pN);
-		printf("%d\n", Frames[i].counter);
 	}
 	printf("Count1: %d\n", c1);
 	printf("Count2: %d\n", c2);
