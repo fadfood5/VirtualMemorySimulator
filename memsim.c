@@ -334,69 +334,72 @@ void opt(const char *fileName, int fra, const char *type){
 	fclose(file3);
 	printf("done\n");
 
-	if (file) {
-			traces++;
-			//Run through file by line
-	    while ((c = getc(file)) != EOF){
-					traces++;
-					//Create a page table entry struct
-					struct PageTableEntry p;
-					fscanf (file, "%s %c", p.pN, &b);
-					//Cut down string to page number
-					p.pN[5] = '\0';
-					if(strcmp(type, "debug") == 0)
-						printf("%s\n", p.pN);
-					//Set read/write to b
-					strncpy(&p.input_output, &b, 1);
-					//Set dirty bit based on read/write being scanned
-					if(b == 'W')
-						p.dirtyBit = 1;
-					else
-						p.dirtyBit = 0;
 
-					p.counter = 0;
-					p.clk = 0;
+		if (file) {
+				//Run through file by line
+		    while ((c = getc(file)) != EOF){
+						traces++;
+						//Create a temporary struct
+						struct PageTableEntry p;
+						fscanf (file, "%s %c", p.pN, &b);
+						//Cut down string to page number
+						p.pN[5] = '\0';
+						//Set read/write to empty
+						strncpy(&p.input_output, &b, 1);
+						//Set dirty bit based on read/write being scanned
+						if(b == 'W')
+							p.dirtyBit = 1;
+						else
+							p.dirtyBit = 0;
 
-					if(strcmp(type, "debug") == 0){
-							printf("%s", a);
-							printf(" %c\n", b);
-							printf("Page Number: %s\n", p.pN);
-							printf("Input: %c\n", p.input_output);
+						p.counter = 0;
+						p.clk = 0;
+						p.found = 0;
+						p.index = 0;
+
+						//Debug
+						if(strcmp(type, "debug") == 0){
+								p.pN[5] = '\0';
+								printf("Page Number: %s\n", p.pN);
+								printf("Input: %c\n", b);
 						}
 
-					//Go through array of structs
-					for(int i = 0; i < fr; i++){
-						//If array not full and has space
-						if(strcmp(Frames[i].pN, "EMPTY") == 0){
-							printf("1\n");
-							c1++;
-							//Take free space
-							Frames[i] = p;
-							numReads++;
-							//Debug
-							if(strcmp(type, "debug") == 0){
-								printf("Disk Read Performed\n");
-								printf("Free space available\n");
-								printf("Frame added: %s\n", Frames[i].pN);
-								printf("Breaking\n");
-							}
-							break;
-						}else if(strcmp(p.pN, Frames[i].pN) == 0){
-							numHits++;
-							c2++;
-							//If page number is already in array
-							//Debug
-							if(strcmp(type, "debug") == 0)
-								printf("Already exists\n");
-							if(Frames[i].input_output == 'R' && p.input_output == 'W'){
-								Frames[i].input_output = 'W';
-								Frames[i].dirtyBit = 1;
-							}
-							else if(Frames[i].input_output == 'W' && p.input_output == 'R'){
-								Frames[i].input_output = 'R';
-							}
-							break;
-						}else{
+						//Go through array of structs
+						for(int i = 0; i < fr; i++){
+							//If array not full and has space
+							if(strcmp(Frames[i].pN, "EMPTY") == 0){
+								//Take that space
+								Frames[i] = p;
+								numReads++;
+								//Debug
+								if(strcmp(type, "debug") == 0){
+
+									Frames[i].pN[5] = '\0';
+									printf("Disk Read Performed\n");
+									printf("Free space available\n");
+									printf("Frame added: %s\n", Frames[i].pN);
+									printf("Breaking\n");
+								}
+								break;
+						}
+
+							else if(strcmp(p.pN, Frames[i].pN) == 0){
+								numHits++;
+								//If page number is already in array
+								//Debug
+								if(strcmp(type, "debug") == 0)
+									printf("Already exists\n\n");
+								//Switch input_output
+								if(Frames[i].input_output == 'R' && p.input_output == 'W'){
+									Frames[i].input_output = 'W';
+									Frames[i].dirtyBit = 1;
+								}
+								else if(Frames[i].input_output == 'W' && p.input_output == 'R')
+									Frames[i].input_output = 'R';
+								//Set counter to 0
+								Frames[i].counter = 0;
+								break;
+							}else{
 							//If array full and not found
 							if(i+1 == fr){
 								c3++;
