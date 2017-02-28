@@ -283,11 +283,13 @@ void clk(const char *fileName, int fr, const char *type){
 	}
 
 	fclose(file);
-	printf("Final form is: \n");
-	for(int i =0; i < fr; i++){
-		Frames[i].counter++;
-		Frames[i].pN[5] = '\0';
-		printf("%s\n", Frames[i].pN);
+	if(strcmp(type, "debug") == 0){
+		printf("Final form is: \n");
+		for(int i =0; i < fr; i++){
+			Frames[i].counter++;
+			Frames[i].pN[5] = '\0';
+			printf("%s\n", Frames[i].pN);
+		}
 	}
 
 	printf("Num of traces: %d\n", traces);
@@ -397,24 +399,21 @@ void opt(const char *fileName, int fr, const char *type){
 									while ((ch = getc(file)) != EOF) {
 											char d[8];
 							        if (newlines >= temp - 1 && newlines<= temp+fr-1){
-													fscanf (file2, "%s %c", d, &e);
-												//Cut down string to page number
-												// for(int n=0; n<5; n++){
-												// 	FramesTemp[count2][n] = d[n];
-												// }
-												//strncpy(d, d, 5);
-
-													printf("D is: %s\n", d);
-													printf("Count: %d\n", count2);
-												strncpy(FramesTemp[count2], d, 5);
+													fscanf (file2, "%s %c", FramesTemp[count2], &e);
+													//Cut down string to page number
+													//Cut down string to page number
+													printf("Wew: %s\n", FramesTemp[count2]);
+													FramesTemp[count2][5] = '\0';
+													if(strcmp(type, "debug") == 0)
+														printf("%s\n", FramesTemp[count2]);
 
 													printf("kms2\n");
-												//FramesTemp[count2] = d.c_str();
-												printf("%s\n", FramesTemp[count2]);
-												count2++;
+													count2++;
 											}
 							        newlines++;
+											printf("fuck\n");
 									}
+									printf("fuck2\n");
 							}
 							fclose(file2);
 							for(int i = 0; i < fr; i++){
