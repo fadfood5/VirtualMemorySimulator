@@ -299,7 +299,7 @@ void clk(const char *fileName, int fr, const char *type){
 	printf("Num of hits: %d\n", numHits);
 }
 
-void opt(const char *fileName, int fr, const char *type){
+void opt(const char *fileName, int fra, const char *type){
 	int c;
 	FILE *file;
 	file = fopen(fileName, "r");
@@ -309,7 +309,8 @@ void opt(const char *fileName, int fr, const char *type){
 	char e;
 	char temp;
 	int count = 0;
-	int count2 = 0;
+	int countInner = 0;
+	const int fr = fra;
 
 	struct PageTableEntry Frames[fr];
 
@@ -324,6 +325,7 @@ void opt(const char *fileName, int fr, const char *type){
 	int c1=0, c2=0, c3=0;
 
 	if (file) {
+			traces++;
 			//Run through file by line
 	    while ((c = getc(file)) != EOF){
 					traces++;
@@ -387,7 +389,6 @@ void opt(const char *fileName, int fr, const char *type){
 							//If array full and not found
 							if(i+1 == fr){
 								c3++;
-								char *FramesTemp[fr][8];
 								int temp = count;
 
 								FILE *file2;
@@ -396,22 +397,34 @@ void opt(const char *fileName, int fr, const char *type){
 								char d[8];
 								int ch;
 								int newlines = 0;
+								char FramesTemp[fr][8];
+								for(int i=0; i<fr; i++)
+									strcpy(FramesTemp[i], " ");
+								//printf("C3: %d\n", c3);
+								//printf("%d\n", (temp+fr-1)-(fr-1));
 								if(file2){
-									while ((ch = getc(file)) != EOF) {
-											//printf("Line: %d\n", newlines);
-							        if (newlines >= temp - 1 && newlines<= temp+fr-1){
-													//printf("count: %d\n", count2);
-													fscanf (file2, "%s %c", FramesTemp[count2], &e);
-													//Cut down string to page number
-													FramesTemp[count2][5] = '\0';
+									while ((ch = getc(file2)) != EOF) {
+							        if (newlines >= temp - 1 && newlines< temp+fr-1){
+													printf("Temp: %d\n", temp-1);
+													printf("Line: %d\n", newlines);
+													printf("fr: %d\n", temp+fr-1);
+													//printf("countInner: %d\n", countInner);
+													fscanf (file2, "%s %c", FramesTemp[countInner], &e);
+													FramesTemp[countInner][5] = '\0';
+													//printf("%s %c\n", FramesTemp[countInner], e);
 													if(strcmp(type, "debug") == 0)
-														printf("%s\n", FramesTemp[count2]);
-													count2++;
+														printf("%s\n", FramesTemp[countInner]);
+													for(int m = 0; m < fr; m++){
+														printf("FramesTemp %d: %s\n", m, FramesTemp[m]);
+													}
+													printf("\n");
+												countInner++;
 											}
 							        newlines++;
 									}
 							}
 							fclose(file2);
+							printf("finished\n");
 							for(int i = 0; i < fr; i++){
 								for(int j = 0; j < fr; j++){
 									if(strcmp(Frames[i].pN, FramesTemp[j]) == 0){
@@ -431,7 +444,7 @@ void opt(const char *fileName, int fr, const char *type){
 								if(Frames[l].found == 0){
 								test = 1;
 								tempL = l;
-								break;
+								printf("Test is 1\n");
 							}else{
 								if(max < Frames[l].index)
 									max = Frames[l].index;
@@ -446,7 +459,6 @@ void opt(const char *fileName, int fr, const char *type){
 									if(max == Frames[m].index){
 										numReads++;
 										numWrites++;
-										break;
 									}
 								}
 							}
@@ -455,21 +467,23 @@ void opt(const char *fileName, int fr, const char *type){
 						}
 					}
 					count++;
-					//printf("Count: %d\n", count);
+					printf("Count: %d\n", count);
 		}
 	}
 
 	fclose(file);
-	printf("Final form is: \n");
-	for(int i =0; i < fr; i++){
-		Frames[i].counter++;
-		printf("%s\n", Frames[i].pN);
-		printf("%d\n", Frames[i].counter);
-	}
+	//if(strcmp(type, "debug") == 0){
+		printf("Final form is: \n");
+		for(int i = 0; i < fr; i++){
+			Frames[i].counter++;
+			printf("%s\n", Frames[i].pN);
+			printf("%d\n", Frames[i].counter);
+		}
+	//}
 	printf("Count1: %d\n", c1);
-	printf("Count2: %d\n", c2);
+	printf("countInner: %d\n", c2);
 	printf("Count3: %d\n", c3);
-	printf("Num of traces: \n");
+	printf("Num of traces: %d\n", traces);
 	printf("Num of frames: %d\n", fr);
 	printf("Num of disk reads: %d\n", numReads);
 	printf("Num of disk writes: %d\n", numWrites);
