@@ -22,19 +22,16 @@ void lru(const char *fileName, int fr, const char *type){
 	int c;
 	FILE *file;
 	file = fopen(fileName, "r");
-	int i = 0;
-	char a[5];
 	char b;
-	char temp;
 
 	struct PageTableEntry Frames[fr];
 
 	for(int i = 0; i < fr; i++){
 		struct PageTableEntry temp;
-		strncpy(temp.pN, "", 5);
+		strncpy(temp.pN, "EMPTY", 5);
 		Frames[i] = temp;
 		if(strcmp(type, "debug") == 0)
-			printf("Created  struct\n");
+			printf("Created empty struct\n");
 	}
 
 	if (file) {
@@ -46,9 +43,7 @@ void lru(const char *fileName, int fr, const char *type){
 					fscanf (file, "%s %c", p.pN, &b);
 					//Cut down string to page number
 					p.pN[5] = '\0';
-					if(strcmp(type, "debug") == 0)
-						printf("%s\n", p.pN);
-					//Set read/write to
+					//Set read/write to empty
 					strncpy(&p.input_output, &b, 1);
 					//Set dirty bit based on read/write being scanned
 					if(b == 'W')
@@ -63,21 +58,22 @@ void lru(const char *fileName, int fr, const char *type){
 
 					//Debug
 					if(strcmp(type, "debug") == 0){
-							printf("%s", a);
-							printf(" %c\n", b);
+							p.pN[5] = '\0';
 							printf("Page Number: %s\n", p.pN);
-							printf("Input: %c\n", p.input_output);
+							printf("Input: %c\n", b);
 					}
 
 					//Go through array of structs
 					for(int i = 0; i < fr; i++){
 						//If array not full and has space
-						if(strcmp(Frames[i].pN, "") == 0){
+						if(strcmp(Frames[i].pN, "EMPTY") == 0){
 							//Take that space
 							Frames[i] = p;
 							numReads++;
 							//Debug
 							if(strcmp(type, "debug") == 0){
+
+								Frames[i].pN[5] = '\0';
 								printf("Disk Read Performed\n");
 								printf("Free space available\n");
 								printf("Frame added: %s\n", Frames[i].pN);
@@ -91,7 +87,7 @@ void lru(const char *fileName, int fr, const char *type){
 							//If page number is already in array
 							//Debug
 							if(strcmp(type, "debug") == 0)
-								printf("Already exists\n");
+								printf("Already exists\n\n");
 							//Switch input_output
 							if(Frames[i].input_output == 'R' && p.input_output == 'W'){
 								Frames[i].input_output = 'W';
@@ -116,7 +112,7 @@ void lru(const char *fileName, int fr, const char *type){
 									}
 								}
 								//If highest counter's input_output is write, switch out page number
-								if(Frames[tempJ].input_output == 'W'){
+								if(Frames[tempJ].dirtyBit == 1){
 									numWrites++;
 									if(strcmp(type, "debug") == 0)
 										printf("Disk Write Performed\n");
@@ -124,11 +120,11 @@ void lru(const char *fileName, int fr, const char *type){
 
 								Frames[tempJ] = p;
 								numReads++;
+								if(strcmp(type, "debug") == 0)
+									printf("Disk Read Performed\n\n");
 						}
 					}
 
-				if(strcmp(type, "debug") == 0)
-					printf("Disk read performed\n");
 				for(int i = 0; i < fr; i++){
 					Frames[i].counter += 1;
 				}
@@ -140,8 +136,8 @@ void lru(const char *fileName, int fr, const char *type){
 	if(strcmp(type, "debug") == 0){
 		printf("Final form is: \n");
 		for(int i =0; i < fr; i++){
+			Frames[i].pN[5] = '\0';
 			printf("%s\n", Frames[i].pN);
-			printf("%d\n", Frames[i].counter);
 		}
 	}
 	printf("Num of traces: %d\n", traces);
@@ -158,19 +154,16 @@ void clk(const char *fileName, int fr, const char *type){
 	int c;
 	FILE *file;
 	file = fopen(fileName, "r");
-	int i = 0;
-	char a[5];
 	char b;
-	char temp;
 
 	struct PageTableEntry Frames[fr];
 
 	for(int i = 0; i < fr; i++){
 		struct PageTableEntry temp;
-		strncpy(temp.pN, "", 5);
+		strncpy(temp.pN, "EMPTY", 5);
 		Frames[i] = temp;
 		if(strcmp(type, "debug") == 0)
-			printf("Created  struct\n");
+			printf("Created empty struct\n");
 	}
 
 	if (file) {
@@ -182,8 +175,6 @@ void clk(const char *fileName, int fr, const char *type){
 					fscanf (file, "%s %c", p.pN, &b);
 					//Cut down string to page number
 					p.pN[5] = '\0';
-					if(strcmp(type, "debug") == 0)
-						printf("%s\n", p.pN);
 					//Set read/write to b
 					strncpy(&p.input_output, &b, 1);
 					//Set dirty bit based on read/write being scanned
@@ -198,20 +189,23 @@ void clk(const char *fileName, int fr, const char *type){
 					p.index = 0;
 
 					if(strcmp(type, "debug") == 0){
-							printf("%s", a);
-							printf(" %c\n", b);
-							printf("Page Number: %s\n", p.pN);
-							printf("Input: %c\n", p.input_output);
+							p.pN[5] = '\0';
+							if(strcmp(type, "debug") == 0){
+								printf("Page Number: %s\n", p.pN);
+								printf("Input: %c\n", b);
+							}
 						}
 
 					//Go through array of structs
 					for(int i = 0; i < fr; i++){
 						//If array not full and has space
-						if(strcmp(Frames[i].pN, "") == 0){
+						if(strcmp(Frames[i].pN, "EMPTY") == 0){
 							//Take free space
 							Frames[i] = p;
 							numReads++;
 							//Debug
+
+							Frames[i].pN[5] = '\0';
 							if(strcmp(type, "debug") == 0){
 								printf("Disk Read Performed\n");
 								printf("Free space available\n");
@@ -224,7 +218,7 @@ void clk(const char *fileName, int fr, const char *type){
 							//If page number is already in array
 							//Debug
 							if(strcmp(type, "debug") == 0)
-								printf("Already exists\n");
+								printf("Already exists\n\n");
 							if(Frames[i].input_output == 'R' && p.input_output == 'W'){
 								Frames[i].input_output = 'W';
 								Frames[i].dirtyBit = 1;
@@ -246,7 +240,7 @@ void clk(const char *fileName, int fr, const char *type){
 									if(Frames[j].clk == 1){
 										//If they were all 1, Frames[0] gets swapped out
 										if(fr == j - 1){
-											if(Frames[0].input_output == 'W')
+											if(Frames[0].dirtyBit == 1)
 												numWrites++;
 											numReads++;
 											Frames[0] = p;
@@ -254,6 +248,7 @@ void clk(const char *fileName, int fr, const char *type){
 												printf("Disk Read Performed\n");
 												if(Frames[0].input_output == 'W')
 													printf("Disk Write Performed\n");
+												printf("\n");
 											}
 										}
 										else
@@ -261,7 +256,7 @@ void clk(const char *fileName, int fr, const char *type){
 									}
 
 									else if(Frames[j].clk == 0){
-										if(p.input_output == 'W')
+										if(Frames[j].dirtyBit == 1)
 											numWrites++;
 										numReads++;
 										if(strcmp(type, "debug") == 0){
@@ -269,7 +264,8 @@ void clk(const char *fileName, int fr, const char *type){
 											if(p.input_output == 'W')
 												printf("Disk Write Performed\n");
 										}
-
+										if(strcmp(type, "debug") == 0)
+											printf("\n");
 										Frames[j] = p;
 										break;
 
@@ -286,7 +282,6 @@ void clk(const char *fileName, int fr, const char *type){
 	if(strcmp(type, "debug") == 0){
 		printf("Final form is: \n");
 		for(int i =0; i < fr; i++){
-			Frames[i].counter++;
 			Frames[i].pN[5] = '\0';
 			printf("%s\n", Frames[i].pN);
 		}
