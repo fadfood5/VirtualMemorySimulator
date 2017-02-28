@@ -387,33 +387,29 @@ void opt(const char *fileName, int fr, const char *type){
 							//If array full and not found
 							if(i+1 == fr){
 								c3++;
-								char *FramesTemp[fr];
+								char *FramesTemp[fr][8];
 								int temp = count;
 
 								FILE *file2;
 								file2 = fopen(fileName, "r");
 
+								char d[8];
 								int ch;
 								int newlines = 0;
 								if(file2){
 									while ((ch = getc(file)) != EOF) {
-											char d[8];
+											//printf("Line: %d\n", newlines);
 							        if (newlines >= temp - 1 && newlines<= temp+fr-1){
+													//printf("count: %d\n", count2);
 													fscanf (file2, "%s %c", FramesTemp[count2], &e);
 													//Cut down string to page number
-													//Cut down string to page number
-													printf("Wew: %s\n", FramesTemp[count2]);
 													FramesTemp[count2][5] = '\0';
 													if(strcmp(type, "debug") == 0)
 														printf("%s\n", FramesTemp[count2]);
-
-													printf("kms2\n");
 													count2++;
 											}
 							        newlines++;
-											printf("fuck\n");
 									}
-									printf("fuck2\n");
 							}
 							fclose(file2);
 							for(int i = 0; i < fr; i++){
