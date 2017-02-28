@@ -156,8 +156,6 @@ void clk(const char *fileName, int fr, const char *type){
 	for(int i = 0; i < fr; i++){
 		struct PageTableEntry temp;
 		strncpy(temp.pN, "EMPTY", 5);
-		temp.found = 0;
-		temp.index = 0;
 		Frames[i] = temp;
 		if(strcmp(type, "debug") == 0)
 			printf("Created empty struct\n");
@@ -300,10 +298,14 @@ void opt(const char *fileName, int fr, const char *type){
 	for(int i = 0; i < fr; i++){
 		struct PageTableEntry temp;
 		strncpy(temp.pN, "EMPTY", 5);
+		temp.found = 0;
+		temp.index = 0;
 		Frames[i] = temp;
 		if(strcmp(type, "debug") == 0)
 			printf("Created empty struct\n");
 	}
+
+	int c1=0, c2=0, c3=0;
 
 	if (file) {
 			//Run through file by line
@@ -335,6 +337,7 @@ void opt(const char *fileName, int fr, const char *type){
 					for(int i = 0; i < fr; i++){
 						//If array not full and has space
 						if(strcmp(Frames[i].pN, "EMPTY") == 0){
+							c1++;
 							//Take free space
 							Frames[i] = p;
 							numReads++;
@@ -349,6 +352,7 @@ void opt(const char *fileName, int fr, const char *type){
 						}
 
 						else if(strcmp(p.pN, Frames[i].pN) == 0){
+							c2++;
 							//If page number is already in array
 							//Debug
 							if(strcmp(type, "debug") == 0)
@@ -363,27 +367,35 @@ void opt(const char *fileName, int fr, const char *type){
 							//Set clk to 1
 							Frames[i].clk = 1;
 							break;
-						}
-
-
-						else{
+						}else{
 							//If array full and not found
 							if(i+1 == fr){
-								char FramesTemp[fr][5];
+								c3++;
+								char *FramesTemp[fr];
 								int temp = count;
 
 								FILE *file2;
 								file2 = fopen(fileName, "r");
 
-								int ch, newlines = 0;
+								int ch;
+								int newlines = 0;
 								if(file2){
 									while ((ch = getc(file)) != EOF) {
-											fscanf (file, "%s %c", d, &e);
 							        if (newlines >= temp - 1 && newlines<= temp+fr-1){
+													fscanf (file2, "%s %c", d, &e);
 												//Cut down string to page number
-												for(int j=0; j<5; j++){
-													FramesTemp[count2][j] = d[j];
-												}
+												// for(int n=0; n<5; n++){
+												// 	FramesTemp[count2][n] = d[n];
+												// }
+												//strncpy(d, d, 5);
+
+													printf("D is: %s\n", d);
+													printf("Count: %d\n", count2);
+												strncpy(FramesTemp[count2], d, 5);
+
+													printf("kms2\n");
+												//FramesTemp[count2] = d.c_str();
+												printf("%s\n", FramesTemp[count2]);
 												count2++;
 											}
 							        newlines++;
@@ -415,7 +427,6 @@ void opt(const char *fileName, int fr, const char *type){
 									max = Frames[l].index;
 							}
 						}
-
 							if(test == 1){
 								Frames[tempL] = p;
 								numReads++;
@@ -429,10 +440,12 @@ void opt(const char *fileName, int fr, const char *type){
 									}
 								}
 							}
+
 							}
 						}
 					}
 					count++;
+					//printf("Count: %d\n", count);
 		}
 	}
 
@@ -443,6 +456,9 @@ void opt(const char *fileName, int fr, const char *type){
 		printf("%s\n", Frames[i].pN);
 		printf("%d\n", Frames[i].counter);
 	}
+	printf("Count1: %d\n", c1);
+	printf("Count2: %d\n", c2);
+	printf("Count3: %d\n", c3);
 	printf("Num of traces: \n");
 	printf("Num of frames: %d\n", fr);
 	printf("Num of disk reads: %d\n", numReads);
@@ -451,8 +467,6 @@ void opt(const char *fileName, int fr, const char *type){
 
 //Reads trace file
 void readTrace(const char *fileName, int frames, const char *alg, const char *type){
-	/*if(strcmp(alg, "vms") == 0)
-		vms(fileName, frames, type);*/
 	if(strcmp(alg, "lru") == 0)
 		lru(fileName, frames, type);
 	else if(strcmp(alg, "clk") == 0)
