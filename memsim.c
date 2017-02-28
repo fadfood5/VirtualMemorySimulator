@@ -5,6 +5,8 @@
 
 int numWrites = 0;
 int numReads = 0;
+int traces = 0;
+int numHits = 0;
 
 struct PageTableEntry{
 	char pN[5];
@@ -38,6 +40,7 @@ void lru(const char *fileName, int fr, const char *type){
 	if (file) {
 			//Run through file by line
 	    while ((c = getc(file)) != EOF){
+					traces++;
 					//Create a temporary struct
 					struct PageTableEntry p;
 					fscanf (file, "%s %c", a, &b);
@@ -80,6 +83,7 @@ void lru(const char *fileName, int fr, const char *type){
 					}
 
 						else if(strcmp(p.pN, Frames[i].pN) == 0){
+							numHits++;
 							//If page number is already in array
 							//Debug
 							if(strcmp(type, "debug") == 0)
@@ -128,15 +132,18 @@ void lru(const char *fileName, int fr, const char *type){
 	//Close file
 	fclose(file);
 	//Print final array elements
-	printf("Final form is: \n");
-	for(int i =0; i < fr; i++){
-		printf("%s\n", Frames[i].pN);
-		printf("%d\n", Frames[i].counter);
+	if(strcmp(type, "debug") == 0){
+		printf("Final form is: \n");
+		for(int i =0; i < fr; i++){
+			printf("%s\n", Frames[i].pN);
+			printf("%d\n", Frames[i].counter);
+		}
 	}
-	printf("Num of traces: \n");
+	printf("Num of traces: %d\n", traces);
 	printf("Num of frames: %d\n", fr);
 	printf("Num of disk reads: %d\n", numReads);
 	printf("Num of disk writes: %d\n", numWrites);
+	printf("Num of hits: %d\n", numHits);
 
 }
 }
@@ -164,6 +171,7 @@ void clk(const char *fileName, int fr, const char *type){
 	if (file) {
 			//Run through file by line
 	    while ((c = getc(file)) != EOF){
+					traces++;
 					//Create a page table entry struct
 					struct PageTableEntry p;
 					fscanf (file, "%s %c", a, &b);
@@ -202,9 +210,8 @@ void clk(const char *fileName, int fr, const char *type){
 								printf("Breaking\n");
 							}
 							break;
-						}
-
-						else if(strcmp(p.pN, Frames[i].pN) == 0){
+						}else if(strcmp(p.pN, Frames[i].pN) == 0){
+							numHits++;
 							//If page number is already in array
 							//Debug
 							if(strcmp(type, "debug") == 0)
@@ -274,10 +281,11 @@ void clk(const char *fileName, int fr, const char *type){
 		printf("%d\n", Frames[i].counter);
 	}
 
-	printf("Num of traces: \n");
+	printf("Num of traces: %d\n", traces);
 	printf("Num of frames: %d\n", fr);
 	printf("Num of disk reads: %d\n", numReads);
 	printf("Num of disk writes: %d\n", numWrites);
+	printf("Num of hits: %d\n", numHits);
 }
 
 void opt(const char *fileName, int fr, const char *type){
@@ -287,7 +295,6 @@ void opt(const char *fileName, int fr, const char *type){
 	int i = 0;
 	char a[5];
 	char b;
-	char d[8];
 	char e;
 	char temp;
 	int count = 0;
@@ -310,6 +317,7 @@ void opt(const char *fileName, int fr, const char *type){
 	if (file) {
 			//Run through file by line
 	    while ((c = getc(file)) != EOF){
+					traces++;
 					//Create a page table entry struct
 					struct PageTableEntry p;
 					fscanf (file, "%s %c", a, &b);
@@ -349,9 +357,8 @@ void opt(const char *fileName, int fr, const char *type){
 								printf("Breaking\n");
 							}
 							break;
-						}
-
-						else if(strcmp(p.pN, Frames[i].pN) == 0){
+						}else if(strcmp(p.pN, Frames[i].pN) == 0){
+							numHits++;
 							c2++;
 							//If page number is already in array
 							//Debug
@@ -381,6 +388,7 @@ void opt(const char *fileName, int fr, const char *type){
 								int newlines = 0;
 								if(file2){
 									while ((ch = getc(file)) != EOF) {
+											char d[8];
 							        if (newlines >= temp - 1 && newlines<= temp+fr-1){
 													fscanf (file2, "%s %c", d, &e);
 												//Cut down string to page number
@@ -479,11 +487,12 @@ void readTrace(const char *fileName, int frames, const char *alg, const char *ty
 
 //Reads command parameters from console
 int main(int argc, char **argv){
-	printf("%d\n", argc);
+	if(strcmp(argv[4], "debug") == 0){
     for (int i = 0; i < argc; ++i)
 				printf("Added %d: %s\n", i, argv[i]);
 
 		printf("frame: %s \n", argv[2]);
+	}
 		int c = atoi(argv[2]);
 		readTrace(argv[1], c, argv[3], argv[4]);
 
