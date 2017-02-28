@@ -56,6 +56,8 @@ void lru(const char *fileName, int fr, const char *type){
 
 					p.counter = 0;
 					p.clk = 0;
+					p.found = 0;
+					p.index = 0;
 
 					//Debug
 					if(strcmp(type, "debug") == 0){
@@ -187,6 +189,8 @@ void clk(const char *fileName, int fr, const char *type){
 
 					p.counter = 0;
 					p.clk = 1;
+					p.found = 0;
+					p.index = 0;
 
 					if(strcmp(type, "debug") == 0){
 							printf("%s", a);
@@ -305,8 +309,6 @@ void opt(const char *fileName, int fr, const char *type){
 	for(int i = 0; i < fr; i++){
 		struct PageTableEntry temp;
 		strncpy(temp.pN, "EMPTY", 5);
-		temp.found = 0;
-		temp.index = 0;
 		Frames[i] = temp;
 		if(strcmp(type, "debug") == 0)
 			printf("Created empty struct\n");
@@ -332,7 +334,7 @@ void opt(const char *fileName, int fr, const char *type){
 						p.dirtyBit = 0;
 
 					p.counter = 0;
-					p.clk = 1;
+					p.clk = 0;
 
 					if(strcmp(type, "debug") == 0){
 							printf("%s", a);
@@ -371,8 +373,6 @@ void opt(const char *fileName, int fr, const char *type){
 							else if(Frames[i].input_output == 'W' && p.input_output == 'R'){
 								Frames[i].input_output = 'R';
 							}
-							//Set clk to 1
-							Frames[i].clk = 1;
 							break;
 						}else{
 							//If array full and not found
