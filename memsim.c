@@ -24,6 +24,7 @@ void lru(const char *fileName, int fr, const char *type){
 	file = fopen(fileName, "r");
 	char a[5];
 	char b;
+	//unsigned a;
 
 	struct PageTableEntry Frames[fr];
 
@@ -97,6 +98,7 @@ void lru(const char *fileName, int fr, const char *type){
 								Frames[i].input_output = 'R';
 							//Set counter to 0
 							Frames[i].counter = 0;
+							break;
 						}
 
 						else if(i+1 == fr){
@@ -275,10 +277,10 @@ void clk(const char *fileName, int fr, const char *type){
 	fclose(file);
 	printf("Final form is: \n");
 	for(int i =0; i < fr; i++){
-		printf("%s ", Frames[i].pN);
+		printf("%s %c \n", Frames[i].pN, Frames[i].input_output);
 	}
 
-	printf("Num of traces: %d\n", traces);
+	printf("\nNum of traces: %d\n", traces);
 	printf("Num of frames: %d\n", fr);
 	printf("Num of disk reads: %d\n", numReads);
 	printf("Num of disk writes: %d\n", numWrites);
